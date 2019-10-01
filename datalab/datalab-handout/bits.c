@@ -166,7 +166,7 @@ int tmin(void) {
  */
 int isTmax(int x) {
   /* TMAX = ~TMIN */
-  return !(~(1<<31) ^ x);
+  return !(~(1 << 31) ^ x);
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -226,14 +226,11 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  /* y - x >= 0 */
-  int TMIN = 1 << 31;
-  int isXTMIN = !(x ^ TMIN);
-  int isYTMIN = !(y ^ TMIN);
-  int isXNegative = x >> 31;
-  int isYNegative = y >> 31;
-  return (!(isYTMIN & !isXTMIN) & (!(isYNegative & !isXNegative))) &
-         (isXTMIN | (isXNegative & !isYNegative) | (!((y + ~x + 1) >> 31)));
+  /* (y >=0 && x <0) || ((x * y >= 0) && (y + (-x) >= 0)) */
+  int signX = (x >> 31) & 1;
+  int signY = (y >> 31) & 1;
+  int signXSubY = ((y + ~x + 1) >> 31) & 1;
+  return (signX & ~signY) | (!(signX ^ signY) & !signXSubY);
 }
 //4
 /* 
