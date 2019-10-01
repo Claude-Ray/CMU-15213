@@ -257,7 +257,22 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  int sign = (x >> 31) & 1;
+  int f = ~(!sign) + 1;
+  int of = ~f;
+  int ox = x;
+  // negate x, x = x < 0 ? ~x : x
+  x = ((f ^ ~x) & of) | ((of ^ x) & f);
+  // left shift (for the first 1)
+  x |= (x << 1);
+  // bisection
+  int n = 0;
+  n += (!!(x & (~0 << (n + 16)))) << 4;
+  n += (!!(x & (~0 << (n + 8)))) << 3;
+  n += (!!(x & (~0 << (n + 4)))) << 2;
+  n += (!!(x & (~0 << (n + 2)))) << 1;
+  n += !!(x & (~0 << (n + 1)));
+  return n + 1;
 }
 //float
 /* 
