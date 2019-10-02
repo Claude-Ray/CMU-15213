@@ -260,18 +260,26 @@ int howManyBits(int x) {
   int sign = (x >> 31) & 1;
   int f = ~(!sign) + 1;
   int of = ~f;
-  int ox = x;
-  // negate x, x = x < 0 ? ~x : x
+  /*
+   * NOTing x to remove the effect of the sign bit.
+   * x = x < 0 ? ~x : x
+   */
   x = ((f ^ ~x) & of) | ((of ^ x) & f);
-  // left shift (for the first 1)
+  /*
+   * We need to get the index of the highest bit 1.
+   * Easy to find that if it's even-numbered, `n` will lose the length of 1.
+   * But the odd-numvered won't.
+   * So let's left shift 1 (for the first 1) to fix this.
+   */
   x |= (x << 1);
-  // bisection
   int n = 0;
+  // Get index with bisection.
   n += (!!(x & (~0 << (n + 16)))) << 4;
   n += (!!(x & (~0 << (n + 8)))) << 3;
   n += (!!(x & (~0 << (n + 4)))) << 2;
   n += (!!(x & (~0 << (n + 2)))) << 1;
   n += !!(x & (~0 << (n + 1)));
+  // Add one more for the sign bit.
   return n + 1;
 }
 //float
