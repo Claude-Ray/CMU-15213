@@ -329,12 +329,8 @@ int floatFloat2Int(unsigned uf) {
   if (exp < 0)
     return 0;
   int frac = (uf & 0x007fffff) | 0x00800000;
-  int f = 0;
   // Left shift or right shift
-  if (exp > 23)
-    f = (0x00800000 | frac) << (exp - 23);
-  else
-    f = frac >> (23 - exp);
+  int f = (exp > 23) ? (frac << (exp - 23)) : (frac >> (23 - exp));
   // Sign
   return (uf & TMIN) ? -f : f;
 }
